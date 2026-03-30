@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Party Game - Antigravity</title>
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', Arial, sans-serif;
+    background: #0d0d0d;
+    color: white;
+    overflow: hidden;
+    transition: background 1s ease;
+}
+
+#bg-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1;
+    transition: all 1s ease;
+    background: radial-gradient(circle at center, #1a0000 0%, #000000 100%);
+}
+
+.particle {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* Antigravity background animations */
+.bg-low-gravity { background: radial-gradient(circle at center, #001f33, #000000) !important; }
+.bg-zero-gravity { background: radial-gradient(circle at center, #1a0033, #000000) !important; }
+.bg-reverse-gravity { background: radial-gradient(circle at center, #330d00, #000000) !important; }
+
+/* Cinematic Battle BG */
+.bg-battle {
+    background: linear-gradient(135deg, #cc0000 0%, #1a0000 50%, #0022cc 100%) !important;
+    animation: flash 0.5s infinite alternate;
+}
+@keyframes flash {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.6); }
+}
+
+/* Glassmorphism Main Card */
+.card {
+    background: rgba(20, 20, 20, 0.4);
+    padding: 50px 40px;
+    border-radius: 30px;
+    text-align: center;
+    width: 440px;
+    box-shadow: 0 0 50px rgba(255,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.05);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255,255,255,0.15);
+    position: relative;
+    z-index: 10;
+    transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+.card-low-gravity { border-color: #00e5ff; box-shadow: 0 0 50px rgba(0,229,255,0.3), inset 0 0 15px rgba(0,229,255,0.1); }
+.card-zero-gravity { border-color: #b000ff; box-shadow: 0 0 50px rgba(176,0,255,0.3), inset 0 0 15px rgba(176,0,255,0.1); }
+.card-reverse-gravity { border-color: #ffaa00; box-shadow: 0 0 50px rgba(255,170,0,0.3), inset 0 0 15px rgba(255,170,0,0.1); }
+
+h1 { margin-bottom: 20px; color: #fff; text-shadow: 0 0 15px #ff0055; font-size: 32px; }
+
+input {
+    width: 100%; padding: 12px; border-radius: 10px; border: none;
+    margin-bottom: 15px; font-size: 14px; outline: none; background: rgba(255,255,255,0.9);
+}
+
+button {
+    padding: 12px 20px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #ff0055, #ffaa00);
+    color: white; font-size: 16px; font-weight: bold; cursor: pointer;
+    margin: 5px; transition: 0.3s; box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+}
+button:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(255,80,0,0.7); filter: brightness(1.2); }
+
+/* Setup UI */
+#playerSetup { margin-bottom: 20px; }
+.chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; justify-content: center; }
+.chip { background: rgba(255, 255, 255, 0.1); padding: 6px 14px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
+.chip span { cursor: pointer; color: #ff5555; font-weight: bold; }
+.input-row { display: flex; gap: 10px; }
+.input-row input { margin: 0; }
+
+/* The resulting text styling */
+.player { font-size: 24px; margin-bottom: 10px; color: #ffeb99; text-shadow: 0 0 10px rgba(255,235,153,0.5); }
+.type { font-size: 14px; letter-spacing: 3px; opacity: 0.7; text-transform: uppercase; }
+.message { font-size: 28px; font-weight: bold; margin-top: 15px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+.gravity-badge {
+    position: absolute; top: -15px; right: -15px; padding: 6px 14px;
+    border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase;
+    letter-spacing: 1px; z-index: 10; color: white;
+}
+
+/* Scattered HUD Scoreboard */
+#floating-scoreboard {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 5;
+}
+.hud-badge {
+    position: absolute; pointer-events: auto; background: rgba(10, 10, 10, 0.5);
+    border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px); padding: 12px;
+    border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    display: flex; flex-direction: column; align-items: center; min-width: 120px; color: white;
+    transition: transform 0.3s;
+}
+.hud-badge:hover { transform: translate(-50%, -50%) scale(1.05) !important; z-index: 20; border-color: rgba(255,255,255,0.4); }
+.hud-name { font-weight: bold; color: #fff; text-shadow: 0 0 5px #ffaa00; margin-bottom: 8px; font-size: 16px; letter-spacing: 1px; }
+.hud-stat { font-size: 13px; display: flex; justify-content: space-between; width: 100%; margin: 4px 0; align-items: center; background: rgba(255,255,255,0.05); padding: 4px 6px; border-radius: 6px; }
+.hud-controls { display: flex; gap: 6px; }
+.hud-btn {
+    background: rgba(255,255,255,0.15); border: none; color: white; width: 22px; height: 22px;
+    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; margin:0; padding:0; box-shadow: none;
+}
+.hud-btn:hover { background: rgba(255,255,255,0.4); box-shadow: 0 0 10px #fff; }
+
+/* Battle Screen Elements */
+#battle-screen {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 100; flex-direction: column; justify-content: center; align-items: center;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(15px);
+}
+#battle-screen h1 { font-size: 100px; text-shadow: 0 0 30px #ff0000; margin: 0; animation: scalePulse 1s infinite alternate; }
+#battle-players { font-size: 45px; color: #fff; text-shadow: 0 0 20px #ffaa00; margin: 20px 0; font-weight: 900; }
+
+@keyframes scalePulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+</style>
+</head>
+
+<body>
+<div id="bg-layer"></div>
+<div id="particle-container"></div>
+<div id="floating-scoreboard"></div>
+
+<!-- Battle Screen -->
+<div id="battle-screen">
+    <h1>VS</h1>
+    <h2 id="battle-players">Player A vs Player B</h2>
+    <div style="font-size: 22px; margin-bottom: 40px; color: #ccc;">Who lost the challenge? (Loser drinks 4, Winner receives given)</div>
+    <div style="display:flex; gap: 30px;">
+        <button id="btn-loser-a" style="font-size: 24px; padding: 15px 40px; background: #ff0055; box-shadow: 0 0 30px #ff0055;"></button>
+        <button id="btn-loser-b" style="font-size: 24px; padding: 15px 40px; background: #0088ff; box-shadow: 0 0 30px #0088ff;"></button>
+    </div>
+</div>
+
+<!-- Main Game Card -->
+<div class="card" id="main-card">
+    <h1 id="gameTitle">🔥 Party Game</h1>
+
+    <div id="playerSetup">
+        <div class="chip-container" id="playerList"></div>
+        <div class="input-row">
+            <input id="playerName" placeholder="Enter a player name" onkeypress="if(event.key === 'Enter') addPlayer()">
+            <button onclick="addPlayer()" style="margin:0; padding: 0 20px;">Add</button>
+        </div>
+    </div>
+
+    <button id="startBtn" onclick="startGame()" style="width: 100%;">START THE CHAOS</button>
+    
+    <div class="result" id="result" style="margin-top: 20px;">
+        Setup your squad to begin!
+    </div>
+
+    <!-- Container injected with resolution action buttons & next turn -->
+    <div id="action-payload" style="margin-top:20px; min-height: 50px;"></div>
+    <button id="nextBtn" onclick="drawAction()" style="display:none; width: 100%; margin-top: 20px;">Next Turn</button>
+</div>
+
+<script>
+let gameStarted = false;
+let players = [];
+
+function addPlayer() {
+    const input = document.getElementById('playerName');
+    const name = input.value.trim();
+    if (name && !players.includes(name)) {
+        players.push(name);
+        input.value = "";
+        renderPlayers();
+    }
+}
+
+function removePlayer(name) {
+    players = players.filter(p => p !== name);
+    renderPlayers();
+}
+
+function renderPlayers() {
+    const container = document.getElementById('playerList');
+    container.innerHTML = players.map(p => `<div class="chip">${p} <span onclick="removePlayer('${p}')">×</span></div>`).join('');
+}
+
+async function startGame() {
+    if (players.length < 2) { alert("Enter at least 2 players!"); return; }
+    await fetch(`/start?players=${players.join(',')}`);
+    gameStarted = true;
+    document.getElementById('playerSetup').style.display = 'none';
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('nextBtn').style.display = 'inline-block';
+    document.getElementById('result').innerHTML = "Ready to roll!";
+    
+    // Manually trigger HUD load by doing fake score fetch or we rely on first round
+    // A quick empty draw just to populate UI scores is fine, but user has to click first
+}
+
+function spawnParticles(count, type) {
+    const container = document.getElementById('particle-container');
+    container.innerHTML = '';
+    for(let i=0; i<count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 15 + 5;
+        p.style.width = size + 'px'; p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + 'vw'; p.style.top = Math.random() * 100 + 'vh';
+        
+        let color = '#fff';
+        if(type === 'zero gravity') color = '#b000ff';
+        if(type === 'low gravity') color = '#00e5ff';
+        if(type === 'reverse gravity') color = '#ffaa00';
+
+        p.style.background = color;
+        p.style.boxShadow = `0 0 15px ${color}`;
+
+        // Geometric creativity! Multiple shapes!
+        let shapeDecider = Math.random();
+        if(shapeDecider > 0.6) {
+            p.style.borderRadius = "50%"; // Circle
+        } else if (shapeDecider > 0.3) {
+            p.style.borderRadius = "0%"; // Square
+            p.style.transform = `rotate(${Math.random()*90}deg)`;
+        } else {
+            p.style.clipPath = "polygon(50% 0%, 0% 100%, 100% 100%)"; // Triangle
+            p.style.borderRadius = "0%";
+        }
+
+        // Sometimes an empty ring
+        if(Math.random() > 0.8) {
+            p.style.background = "transparent";
+            p.style.border = `2px solid ${color}`;
+        }
+        
+        if (type === 'zero gravity') {
+            p.animate([
+                { transform: `translateY(0) rotate(0deg) scale(1)`, opacity: 0 },
+                { opacity: Math.random()*0.5 + 0.3, offset: 0.2 },
+                { transform: `translateY(${-Math.random()*150 - 50}px) rotate(180deg) scale(${Math.random()+0.5})`, opacity: 0 }
+            ], { duration: Math.random()*4000 + 2000, iterations: Infinity, direction: 'alternate' });
+        } else if (type === 'low gravity') {
+            p.animate([
+                { transform: `translateY(100vh) rotate(0)`, opacity: 0 },
+                { opacity: 0.6, offset: 0.5 },
+                { transform: `translateY(-10vh) rotate(360deg)`, opacity: 0 }
+            ], { duration: Math.random()*5000 + 3000, iterations: Infinity });
+        } else if (type === 'reverse gravity') {
+            p.animate([
+                { transform: `translateY(-10vh) scale(0)`, opacity: 0 },
+                { opacity: 0.8, offset: 0.5 },
+                { transform: `translateY(100vh) scale(1.5)`, opacity: 0 }
+            ], { duration: Math.random()*2000 + 1000, iterations: Infinity });
+        }
+        container.appendChild(p);
+    }
+}
+
+async function updateScore(player, type, change) {
+    const res = await fetch(`/update_score?player=${encodeURIComponent(player)}&type=${type}&change=${change}`);
+    const data = await res.json();
+    renderScoreTable(data.scores);
+}
+
+function renderScoreTable(scores) {
+    const container = document.getElementById('floating-scoreboard');
+    const entries = Object.entries(scores);
+    const N = entries.length;
+    let html = '';
+    
+    entries.forEach(([name, s], i) => {
+        // Distribute algorithmically around an ellipse hugging the screen edge
+        let angle = (i / N) * 2 * Math.PI;
+        let rx = 42; // vw from center
+        let ry = 42; // vh from center
+        let left = 50 + Math.cos(angle) * rx;
+        let top = 50 + Math.sin(angle) * ry;
+        
+        // Clamp to prevent overflow
+        left = Math.max(9, Math.min(91, left));
+        top = Math.max(10, Math.min(90, top));
+
+        html += `
+        <div class="hud-badge" style="left: ${left}vw; top: ${top}vh; transform: translate(-50%, -50%);">
+            <div class="hud-name">${name}</div>
+            <div class="hud-stat">
+                <span>Taken: <b>${s.sipped}</b></span>
+                <div class="hud-controls">
+                    <button class="hud-btn" onclick="updateScore('${name}', 'sipped', -1)">-</button>
+                    <button class="hud-btn" onclick="updateScore('${name}', 'sipped', 1)">+</button>
+                </div>
+            </div>
+            <div class="hud-stat">
+                <span>Given: <b>${s.given}</b></span>
+                <div class="hud-controls">
+                    <button class="hud-btn" onclick="updateScore('${name}', 'given', -1)">-</button>
+                    <button class="hud-btn" onclick="updateScore('${name}', 'given', 1)">+</button>
+                </div>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// Interactive Resolution Paths
+async function applyGive(source, target, sips) {
+    const res = await fetch(`/apply_action?type=give&source=${encodeURIComponent(source)}&target=${encodeURIComponent(target)}&sips=${sips}`);
+    const data = await res.json();
+    renderScoreTable(data.scores);
+    
+    document.getElementById('action-payload').innerHTML = `<div style="color:#00ff88; font-size:18px; font-weight:bold; animation: flash 1s;">Action sent onto ${target}!</div>`;
+    document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function startBattle(playerA, playerB) {
+    document.getElementById('bg-layer').classList.add('bg-battle');
+    document.getElementById('battle-players').innerText = `${playerA}  VS  ${playerB}`;
+    
+    const btnA = document.getElementById('btn-loser-a');
+    btnA.innerText = `${playerA} Lost`;
+    btnA.onclick = () => resolveBattle(playerB, playerA); // B wins, A loses
+
+    const btnB = document.getElementById('btn-loser-b');
+    btnB.innerText = `${playerB} Lost`;
+    btnB.onclick = () => resolveBattle(playerA, playerB); // A wins, B loses
+
+    document.getElementById('battle-screen').style.display = 'flex';
+    document.getElementById('main-card').style.display = 'none';
+}
+
+async function resolveBattle(winner, loser) {
+    const res = await fetch(`/apply_action?type=challenge&winner=${encodeURIComponent(winner)}&loser=${encodeURIComponent(loser)}`);
+    const data = await res.json();
+    renderScoreTable(data.scores);
+
+    document.getElementById('bg-layer').classList.remove('bg-battle');
+    document.getElementById('battle-screen').style.display = 'none';
+    document.getElementById('main-card').style.display = 'block';
+
+    document.getElementById('action-payload').innerHTML = `<div style="color:#ff0055; font-size:18px; font-weight:bold;">${loser} lost and takes 4 sips! ${winner} gets the giving points!</div>`;
+    document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+async function drawAction() {
+    if (!gameStarted) return;
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('action-payload').innerHTML = ''; // Clear past target interactions
+
+    const res = await fetch('/play');
+    const data = await res.json();
+
+    document.getElementById('gameTitle').innerText = `🔥 Round ${data.round}`;
+    renderScoreTable(data.scores); // keep hud updated every draw
+    
+    // Antigravity & Particles
+    const bg = document.getElementById('bg-layer');
+    bg.className = '';
+    const card = document.getElementById('main-card');
+    card.className = 'card'; // reset card classes
+    document.getElementById('particle-container').innerHTML = '';
+    
+    let badgeColor = "#ff0055"; 
+    
+    if (data.gravity === "low gravity") { 
+        bg.classList.add('bg-low-gravity'); card.classList.add('card-low-gravity');
+        badgeColor = "#00e5ff"; spawnParticles(50, 'low gravity'); 
+    }
+    else if (data.gravity === "zero gravity") { 
+        bg.classList.add('bg-zero-gravity'); card.classList.add('card-zero-gravity');
+        badgeColor = "#b000ff"; spawnParticles(70, 'zero gravity'); 
+    }
+    else if (data.gravity === "reverse gravity") { 
+        bg.classList.add('bg-reverse-gravity'); card.classList.add('card-reverse-gravity');
+        badgeColor = "#ffaa00"; spawnParticles(80, 'reverse gravity'); 
+    }
+
+    document.getElementById('result').innerHTML = `
+        ${data.gravity !== 'normal' ? `<div class="gravity-badge" style="box-shadow: 0 0 15px ${badgeColor}; background: ${badgeColor};">${data.gravity}</div>` : ''}
+        <div class="player">🎯 ${data.player}'s turn</div>
+        <div class="type">${data.type}</div>
+        <div class="message">${data.message}</div>
+    `;
+
+    // Interactive Routing
+    let payload = document.getElementById('action-payload');
+    
+    if (data.requires_target) {
+        let interactionHtml = `<div style="color:#ffaa00; font-size: 14px; margin-bottom: 10px; font-weight: bold;">SELECT A TARGET TO RECEIVE ${data.sips} SIPS:</div><div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">`;
+        const others = data.players.filter(p => p !== data.player);
+        others.forEach(p => {
+            interactionHtml += `<button onclick="applyGive('${data.player}', '${p}', ${data.sips})" style="background:#ffaa00; box-shadow:0 0 10px #ffaa00; margin:0; padding: 10px;">${p}</button>`;
+        });
+        interactionHtml += "</div>";
+        payload.innerHTML = interactionHtml;
+    } else if (data.requires_challenge) {
+        let interactionHtml = `<div style="color:#ff0055; font-size: 14px; margin-bottom: 10px; font-weight: bold;">SELECT AN OPPONENT FOR COMBAT:</div><div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">`;
+        const others = data.players.filter(p => p !== data.player);
+        others.forEach(p => {
+            interactionHtml += `<button onclick="startBattle('${data.player}', '${p}')" style="background:#ff0055; box-shadow:0 0 10px #ff0055; margin:0; padding: 10px;">Battle ${p}</button>`;
+        });
+        interactionHtml += "</div>";
+        payload.innerHTML = interactionHtml;
+    } else {
+        // Standard action, show next button
+        document.getElementById('nextBtn').style.display = 'inline-block';
+    }
+}
+</script>
+</body>
+</html>

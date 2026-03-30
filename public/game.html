@@ -6,81 +6,56 @@
 <title>Party Game - Antigravity</title>
 <style>
 body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Inter', Arial, sans-serif;
-    background: #0d0d0d;
-    color: white;
-    overflow: hidden;
-    transition: background 1s ease;
+    margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;
+    font-family: 'Inter', Arial, sans-serif; background: #0d0d0d; color: white;
+    overflow: hidden; transition: background 1s ease; perspective: 1000px;
 }
-
-#bg-layer {
-    position: absolute;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: -1;
-    transition: all 1s ease;
-    background: radial-gradient(circle at center, #1a0000 0%, #000000 100%);
-}
-
-.particle {
-    position: absolute;
-    pointer-events: none;
-    opacity: 0;
-}
-
-/* Antigravity background animations */
+#bg-layer { position: absolute; top:0; left:0; width:100vw; height:100vh; z-index: -1; transition: all 1s ease; background: radial-gradient(circle at center, #1a0000 0%, #000000 100%); }
+.particle { position: absolute; pointer-events: none; opacity: 0; }
 .bg-low-gravity { background: radial-gradient(circle at center, #001f33, #000000) !important; }
 .bg-zero-gravity { background: radial-gradient(circle at center, #1a0033, #000000) !important; }
 .bg-reverse-gravity { background: radial-gradient(circle at center, #330d00, #000000) !important; }
+.bg-battle { background: linear-gradient(135deg, #cc0000 0%, #1a0000 50%, #0022cc 100%) !important; animation: flash 0.5s infinite alternate; }
+@keyframes flash { 0% { filter: brightness(1); } 100% { filter: brightness(1.6); } }
 
-/* Cinematic Battle BG */
-.bg-battle {
-    background: linear-gradient(135deg, #cc0000 0%, #1a0000 50%, #0022cc 100%) !important;
-    animation: flash 0.5s infinite alternate;
-}
-@keyframes flash {
-    0% { filter: brightness(1); }
-    100% { filter: brightness(1.6); }
-}
-
-/* Glassmorphism Main Card */
+/* Main Central Card */
 .card {
-    background: rgba(20, 20, 20, 0.4);
-    padding: 50px 40px;
-    border-radius: 30px;
-    text-align: center;
-    width: 440px;
-    box-shadow: 0 0 50px rgba(255,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.05);
-    backdrop-filter: blur(25px);
-    border: 1px solid rgba(255,255,255,0.15);
-    position: relative;
-    z-index: 10;
-    transition: box-shadow 0.5s ease, border-color 0.5s ease;
+    background: rgba(20, 20, 20, 0.4); padding: 50px 40px; border-radius: 30px; text-align: center;
+    width: 440px; box-shadow: 0 0 50px rgba(255,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.05);
+    backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15);
+    position: relative; z-index: 10; transition: box-shadow 0.5s ease, border-color 0.5s ease;
+    transform-style: preserve-3d;
 }
 .card-low-gravity { border-color: #00e5ff; box-shadow: 0 0 50px rgba(0,229,255,0.3), inset 0 0 15px rgba(0,229,255,0.1); }
 .card-zero-gravity { border-color: #b000ff; box-shadow: 0 0 50px rgba(176,0,255,0.3), inset 0 0 15px rgba(176,0,255,0.1); }
 .card-reverse-gravity { border-color: #ffaa00; box-shadow: 0 0 50px rgba(255,170,0,0.3), inset 0 0 15px rgba(255,170,0,0.1); }
 
-h1 { margin-bottom: 20px; color: #fff; text-shadow: 0 0 15px #ff0055; font-size: 32px; }
-
-input {
-    width: 100%; padding: 12px; border-radius: 10px; border: none;
-    margin-bottom: 15px; font-size: 14px; outline: none; background: rgba(255,255,255,0.9);
+/* Cinematic Animations */
+.flipcard { animation: barrelRoll 0.8s ease-in-out forwards; }
+@keyframes barrelRoll {
+    0% { transform: scale(1) rotateY(0deg); opacity: 1; }
+    50% { transform: scale(0.7) rotateY(180deg); opacity: 0.6; filter: brightness(2); }
+    100% { transform: scale(1) rotateY(360deg); opacity: 1; }
+}
+.shake { animation: shakeAnim 0.6s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shakeAnim {
+    10%, 90% { transform: translate3d(-5px, 0, 0) rotate(-1deg); }
+    20%, 80% { transform: translate3d(10px, 0, 0) rotate(1deg); }
+    30%, 50%, 70% { transform: translate3d(-15px, 0, 0) rotate(-2deg); }
+    40%, 60% { transform: translate3d(15px, 0, 0) rotate(2deg); }
 }
 
+h1 { margin-bottom: 20px; color: #fff; text-shadow: 0 0 15px #ff0055; font-size: 32px; letter-spacing: 2px; }
+input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 15px; font-size: 14px; outline: none; background: rgba(255,255,255,0.9); font-weight: bold; }
+input[type="number"] { width: 50%; text-align: center; }
+
 button {
-    padding: 12px 20px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, #ff0055, #ffaa00);
-    color: white; font-size: 16px; font-weight: bold; cursor: pointer;
-    margin: 5px; transition: 0.3s; box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+    padding: 12px 20px; border: none; border-radius: 12px; background: linear-gradient(135deg, #ff0055, #ffaa00);
+    color: white; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px; transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4); text-transform: uppercase; letter-spacing: 1px;
 }
 button:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(255,80,0,0.7); filter: brightness(1.2); }
 
-/* Setup UI */
 #playerSetup { margin-bottom: 20px; }
 .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; justify-content: center; }
 .chip { background: rgba(255, 255, 255, 0.1); padding: 6px 14px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
@@ -88,332 +63,353 @@ button:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(255,80,0,0.7)
 .input-row { display: flex; gap: 10px; }
 .input-row input { margin: 0; }
 
-/* The resulting text styling */
-.player { font-size: 24px; margin-bottom: 10px; color: #ffeb99; text-shadow: 0 0 10px rgba(255,235,153,0.5); }
-.type { font-size: 14px; letter-spacing: 3px; opacity: 0.7; text-transform: uppercase; }
-.message { font-size: 28px; font-weight: bold; margin-top: 15px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-.gravity-badge {
-    position: absolute; top: -15px; right: -15px; padding: 6px 14px;
-    border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase;
-    letter-spacing: 1px; z-index: 10; color: white;
-}
+.player { font-size: 24px; margin-bottom: 10px; color: #ffeb99; text-shadow: 0 0 10px rgba(255,235,153,0.5); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+.type { font-size: 14px; letter-spacing: 3px; opacity: 0.7; text-transform: uppercase; margin-bottom: 5px; }
+.message { font-size: 28px; font-weight: bold; margin-top: 15px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); line-height: 1.3; }
+.gravity-badge { position: absolute; top: -15px; right: -15px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; z-index: 10; color: white; }
 
-/* Scattered HUD Scoreboard */
-#floating-scoreboard {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    pointer-events: none; z-index: 5;
-}
-.hud-badge {
-    position: absolute; pointer-events: auto; background: rgba(10, 10, 10, 0.5);
-    border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px); padding: 12px;
-    border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    display: flex; flex-direction: column; align-items: center; min-width: 120px; color: white;
-    transition: transform 0.3s;
-}
-.hud-badge:hover { transform: translate(-50%, -50%) scale(1.05) !important; z-index: 20; border-color: rgba(255,255,255,0.4); }
-.hud-name { font-weight: bold; color: #fff; text-shadow: 0 0 5px #ffaa00; margin-bottom: 8px; font-size: 16px; letter-spacing: 1px; }
-.hud-stat { font-size: 13px; display: flex; justify-content: space-between; width: 100%; margin: 4px 0; align-items: center; background: rgba(255,255,255,0.05); padding: 4px 6px; border-radius: 6px; }
-.hud-controls { display: flex; gap: 6px; }
-.hud-btn {
-    background: rgba(255,255,255,0.15); border: none; color: white; width: 22px; height: 22px;
-    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; margin:0; padding:0; box-shadow: none;
-}
-.hud-btn:hover { background: rgba(255,255,255,0.4); box-shadow: 0 0 10px #fff; }
+/* Dedicated HUDS */
+#top-hud { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 40; font-size: 20px; font-weight: 900; letter-spacing: 4px; color: #fff; text-shadow: 0 0 10px #ffaa00; background: rgba(0,0,0,0.6); padding: 8px 30px; border-radius: 20px; border: 1px solid rgba(255,170,0,0.4); display: none; backdrop-filter: blur(10px); }
+#turn-history { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 40; font-size: 13px; color: #ccc; background: rgba(0,0,0,0.6); padding: 10px 25px; border-radius: 12px; letter-spacing: 1px; transition: opacity 0.5s; opacity: 0; text-transform: uppercase; font-weight: bold; backdrop-filter: blur(5px); }
 
-/* Battle Screen Elements */
-#battle-screen {
-    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 100; flex-direction: column; justify-content: center; align-items: center;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(15px);
-}
-#battle-screen h1 { font-size: 100px; text-shadow: 0 0 30px #ff0000; margin: 0; animation: scalePulse 1s infinite alternate; }
-#battle-players { font-size: 45px; color: #fff; text-shadow: 0 0 20px #ffaa00; margin: 20px 0; font-weight: 900; }
+/* Sliding Scoreboard */
+#leaderboard-panel { position: fixed; top: 0; right: 0; width: 320px; height: 100vh; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.1); padding: 20px; overflow-y: auto; z-index: 50; box-shadow: -15px 0 40px rgba(0,0,0,0.8); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform: translateX(100%); box-sizing: border-box; }
+#leaderboard-panel.open { transform: translateX(0); }
+.toggle-scores-btn { position: fixed; top: 20px; right: 20px; z-index: 60; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px; color: white; cursor: pointer; border-radius: 8px; font-weight: 800; font-family: inherit; font-size: 12px; letter-spacing: 2px; transition: 0.3s; }
+.toggle-scores-btn:hover { background: rgba(255,255,255,0.15); box-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
+/* Alert Screens (Battle, KO, Game Over) */
+#battle-screen, #ko-screen, #game-over-screen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); }
+#ko-screen { background: rgba(255,0,0,0.7); z-index: 120; }
+#game-over-screen { background: rgba(0,0,0,0.95); z-index: 150; }
+
+#battle-screen h1 { font-size: 100px; text-shadow: 0 0 40px #ff0000; margin: 0; animation: scalePulse 1s infinite alternate; letter-spacing: 5px; }
+#battle-players { font-size: 45px; color: #fff; text-shadow: 0 0 20px #ffaa00; margin: 20px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
 @keyframes scalePulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+/* Volume Controls */
+.volume-control { position: fixed; top: 20px; left: 20px; z-index: 100; background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 12px; display: flex; gap: 15px; align-items: center; color: white; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px); }
+.volume-control-btn { font-size: 11px; font-weight: 800; cursor: pointer; width: 90px; text-align: center; letter-spacing: 1.5px; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px; color: #00e5ff; }
+input[type="range"] { width: 90px; accent-color: #ffaa00; cursor: pointer; }
+input[type="range"]::-webkit-slider-thumb { background: #ffaa00; }
 </style>
 </head>
 
-<body>
+<body id="body-container">
+<div id="top-hud">ROUND 1</div>
+<div id="turn-history">GAME STARTING</div>
+
+<div class="volume-control">
+    <div class="volume-control-btn" id="muteBtn" onclick="toggleMute()">[ SOUND ON ]</div>
+    <input type="range" id="volSlider" min="0" max="1" step="0.1" value="0.5" onchange="updateVolume(this.value)">
+</div>
+
+<button class="toggle-scores-btn" onclick="toggleScores()">LEADERBOARD</button>
+<div id="leaderboard-panel">
+    <h2 style="margin-top:60px; text-align:center; border-bottom:1px solid #333; padding-bottom:15px; font-weight:900; letter-spacing:3px; color:#fff; font-size:18px;">SCORES</h2>
+    <div id="leaderboard-content" style="margin-top:20px;"></div>
+</div>
+
 <div id="bg-layer"></div>
 <div id="particle-container"></div>
-<div id="floating-scoreboard"></div>
 
 <!-- Battle Screen -->
 <div id="battle-screen">
     <h1>VS</h1>
-    <h2 id="battle-players">Player A vs Player B</h2>
-    <div style="font-size: 22px; margin-bottom: 40px; color: #ccc;">Who lost the challenge? (Loser drinks 4, Winner receives given)</div>
+    <h2 id="battle-players">PLAYER A VS PLAYER B</h2>
+    <div style="font-size: 16px; margin-bottom: 40px; color: #ddd; font-weight:bold; letter-spacing: 1px; text-transform:uppercase;">Who lost the challenge? (Loser drinks 4, Winner given 4)</div>
     <div style="display:flex; gap: 30px;">
-        <button id="btn-loser-a" style="font-size: 24px; padding: 15px 40px; background: #ff0055; box-shadow: 0 0 30px #ff0055;"></button>
-        <button id="btn-loser-b" style="font-size: 24px; padding: 15px 40px; background: #0088ff; box-shadow: 0 0 30px #0088ff;"></button>
+        <button id="btn-loser-a" style="font-size: 20px; padding: 20px 40px; background: #ff0055; box-shadow: 0 0 30px rgba(255,0,85,0.6);"></button>
+        <button id="btn-loser-b" style="font-size: 20px; padding: 20px 40px; background: #0088ff; box-shadow: 0 0 30px rgba(0,136,255,0.6);"></button>
     </div>
 </div>
 
-<!-- Main Game Card -->
-<div class="card" id="main-card">
-    <h1 id="gameTitle">🔥 Party Game</h1>
+<!-- KO Alert Screen -->
+<div id="ko-screen">
+    <h1 id="ko-text" style="font-size: 80px; text-shadow: 0 0 40px #fff; margin: 0; text-align: center; text-transform: uppercase;">PLAYER OUT</h1>
+    <div style="font-size: 24px; margin-top:20px; font-weight: 800; letter-spacing:2px; color:#fff;">HAS BEEN KNOCKED OUT</div>
+    <button onclick="dismissKO()" style="margin-top:40px; background: #fff; color: #ff0000; padding: 15px 40px; font-size:20px; box-shadow: 0 0 20px rgba(255,255,255,0.5);">CONTINUE</button>
+</div>
 
+<!-- Game Over Screen -->
+<div id="game-over-screen">
+    <h1 style="font-size: 100px; color: #ffaa00; text-shadow: 0 0 50px #ffaa00; margin:0;">GAME OVER</h1>
+    <h2 id="winner-text" style="font-size: 45px; color: #fff; margin: 30px 0; text-align: center; text-transform: uppercase;">WINNER WINS</h2>
+    <div style="color: #aaa; margin-bottom: 30px;">Everyone else has been knocked out.</div>
+    <button onclick="location.reload()" style="padding: 20px 60px; font-size: 24px;">NEW GAME</button>
+</div>
+
+
+<div class="card" id="main-card">
+    <h1 id="gameTitle">PARTY GAME</h1>
     <div id="playerSetup">
         <div class="chip-container" id="playerList"></div>
         <div class="input-row">
             <input id="playerName" placeholder="Enter a player name" onkeypress="if(event.key === 'Enter') addPlayer()">
-            <button onclick="addPlayer()" style="margin:0; padding: 0 20px;">Add</button>
+            <button onclick="addPlayer()" style="margin:0; padding: 0 20px;">ADD</button>
+        </div>
+        <div style="margin-top: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="font-size: 12px; color: #aaa; margin-bottom: 5px; font-weight: bold; text-transform: uppercase;">KO Sip Limit (0 for endless)</div>
+            <input type="number" id="koLimit" placeholder="0" value="0" style="margin: 0; padding: 8px;">
         </div>
     </div>
-
     <button id="startBtn" onclick="startGame()" style="width: 100%;">START THE CHAOS</button>
-    
-    <div class="result" id="result" style="margin-top: 20px;">
-        Setup your squad to begin!
-    </div>
-
-    <!-- Container injected with resolution action buttons & next turn -->
+    <div class="result" id="result" style="margin-top: 20px; color: #ddd;">Waiting for setup...</div>
     <div id="action-payload" style="margin-top:20px; min-height: 50px;"></div>
-    <button id="nextBtn" onclick="drawAction()" style="display:none; width: 100%; margin-top: 20px;">Next Turn</button>
+    <button id="nextBtn" onclick="drawAction()" style="display:none; width: 100%; margin-top: 20px;">NEXT TURN</button>
 </div>
 
 <script>
-let gameStarted = false;
-let players = [];
+let gameStarted = false; let players = []; let leaderboardOpen = false;
 
-function addPlayer() {
-    const input = document.getElementById('playerName');
-    const name = input.value.trim();
-    if (name && !players.includes(name)) {
-        players.push(name);
-        input.value = "";
-        renderPlayers();
+// ---------- GLOBAL UI CONTROL ----------
+function toggleScores() {
+    leaderboardOpen = !leaderboardOpen; const panel = document.getElementById('leaderboard-panel');
+    if(leaderboardOpen) panel.classList.add('open'); else panel.classList.remove('open');
+}
+function logHistory(msg) {
+    const el = document.getElementById('turn-history');
+    el.innerText = msg; el.style.opacity = 1;
+    clearTimeout(window.historyTimeout); window.historyTimeout = setTimeout(() => el.style.opacity = 0, 5000);
+}
+
+// ---------- SFX SOUND ENGINE ----------
+let audioCtx; let masterVolume = 0.5; let sfxEnabled = true;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function toggleMute() { 
+    sfxEnabled = !sfxEnabled; const btn = document.getElementById('muteBtn');
+    btn.innerText = sfxEnabled ? "[ SOUND ON ]" : "[ MUTED ]"; btn.style.color = sfxEnabled ? "#00e5ff" : "#ff5555";
+}
+function updateVolume(val) { masterVolume = parseFloat(val); }
+
+function playTone(freq, type, duration, volScale = 1) {
+    if(!sfxEnabled) return; initAudio();
+    const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + duration);
+    gainNode.gain.setValueAtTime(masterVolume * volScale, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
+}
+function sfxDraw() { playTone(1500, 'sine', 0.4, 0.4); }
+function sfxAlarm() { if(!sfxEnabled) return; initAudio(); for(let i=0; i<3; i++) { setTimeout(() => playTone(600, 'square', 0.4, 0.3), i*500); setTimeout(() => playTone(800, 'square', 0.4, 0.3), i*500 + 250); } }
+function sfxHit() { playTone(120, 'sawtooth', 1.5, 1); }
+
+// ---------- STATUS INTERCEPTORS ----------
+function interceptGameStatus(data) {
+    if(!data.status) return false;
+    
+    // First Priority: Does the game formally end?
+    if (data.status.game_over) {
+        document.getElementById('card')?.remove(); // hide cleanly
+        document.getElementById('game-over-screen').style.display = 'flex';
+        document.getElementById('winner-text').innerText = data.status.winner ? `${data.status.winner} SURVIVED` : 'EVERYONE ELIMINATED';
+        sfxHit(); setTimeout(() => sfxHit(), 500);
+        return true;
     }
+    
+    // Check for KOs
+    if (data.status.new_kos && data.status.new_kos.length > 0) {
+        document.getElementById('ko-screen').style.display = 'flex';
+        document.getElementById('ko-text').innerText = data.status.new_kos.join(' & ');
+        sfxAlarm();
+        document.getElementById('body-container').classList.add('shake');
+        setTimeout(() => document.getElementById('body-container').classList.remove('shake'), 800);
+        logHistory(`ELIMINATION: ${data.status.new_kos.join(' & ')} WAS KNOCKED OUT`);
+    }
+    
+    return false; // let execution continue
 }
+function dismissKO() { document.getElementById('ko-screen').style.display = 'none'; }
 
-function removePlayer(name) {
-    players = players.filter(p => p !== name);
-    renderPlayers();
-}
 
-function renderPlayers() {
-    const container = document.getElementById('playerList');
-    container.innerHTML = players.map(p => `<div class="chip">${p} <span onclick="removePlayer('${p}')">×</span></div>`).join('');
+// ---------- SETUP LOGIC ----------
+function addPlayer() {
+    const input = document.getElementById('playerName'); const name = input.value.trim().toUpperCase();
+    if (name && !players.includes(name)) { players.push(name); input.value = ""; renderPlayers(); }
 }
+function removePlayer(name) { players = players.filter(p => p !== name); renderPlayers(); }
+function renderPlayers() { document.getElementById('playerList').innerHTML = players.map(p => `<div class="chip">${p} <span onclick="removePlayer('${p}')">×</span></div>`).join(''); }
 
 async function startGame() {
-    if (players.length < 2) { alert("Enter at least 2 players!"); return; }
-    await fetch(`/start?players=${players.join(',')}`);
-    gameStarted = true;
-    document.getElementById('playerSetup').style.display = 'none';
-    document.getElementById('startBtn').style.display = 'none';
-    document.getElementById('nextBtn').style.display = 'inline-block';
-    document.getElementById('result').innerHTML = "Ready to roll!";
+    if (players.length < 2) { alert("ENTER AT LEAST 2 PLAYERS"); return; }
+    const limit = document.getElementById('koLimit').value || 0;
     
-    // Manually trigger HUD load by doing fake score fetch or we rely on first round
-    // A quick empty draw just to populate UI scores is fine, but user has to click first
+    initAudio(); 
+    await fetch(`/start?players=${players.join(',')}&ko_limit=${limit}`);
+    gameStarted = true;
+    
+    document.getElementById('playerSetup').style.display = 'none';
+    document.getElementById('gameTitle').style.display = 'none';
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('top-hud').style.display = 'block';
+    document.getElementById('nextBtn').style.display = 'inline-block';
+    document.getElementById('result').innerHTML = "SYSTEM ENGAGED. PROCEED.";
+    logHistory("GAME STARTED");
 }
 
+// ---------- VISUALS ----------
 function spawnParticles(count, type) {
-    const container = document.getElementById('particle-container');
-    container.innerHTML = '';
+    const container = document.getElementById('particle-container'); container.innerHTML = '';
     for(let i=0; i<count; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        const size = Math.random() * 15 + 5;
-        p.style.width = size + 'px'; p.style.height = size + 'px';
+        const p = document.createElement('div'); p.className = 'particle';
+        const size = Math.random() * 15 + 5; p.style.width = size + 'px'; p.style.height = size + 'px';
         p.style.left = Math.random() * 100 + 'vw'; p.style.top = Math.random() * 100 + 'vh';
-        
         let color = '#fff';
         if(type === 'zero gravity') color = '#b000ff';
         if(type === 'low gravity') color = '#00e5ff';
         if(type === 'reverse gravity') color = '#ffaa00';
+        p.style.background = color; p.style.boxShadow = `0 0 15px ${color}`;
 
-        p.style.background = color;
-        p.style.boxShadow = `0 0 15px ${color}`;
-
-        // Geometric creativity! Multiple shapes!
-        let shapeDecider = Math.random();
-        if(shapeDecider > 0.6) {
-            p.style.borderRadius = "50%"; // Circle
-        } else if (shapeDecider > 0.3) {
-            p.style.borderRadius = "0%"; // Square
-            p.style.transform = `rotate(${Math.random()*90}deg)`;
-        } else {
-            p.style.clipPath = "polygon(50% 0%, 0% 100%, 100% 100%)"; // Triangle
-            p.style.borderRadius = "0%";
-        }
-
-        // Sometimes an empty ring
-        if(Math.random() > 0.8) {
-            p.style.background = "transparent";
-            p.style.border = `2px solid ${color}`;
-        }
+        let decider = Math.random();
+        if(decider > 0.6) { p.style.borderRadius = "50%"; } else if(decider > 0.3) { p.style.borderRadius = "0%"; p.style.transform = `rotate(${Math.random()*90}deg)`; } else { p.style.clipPath = "polygon(50% 0%, 0% 100%, 100% 100%)"; p.style.borderRadius = "0%"; }
+        if(Math.random() > 0.8) { p.style.background = "transparent"; p.style.border = `2px solid ${color}`; }
         
-        if (type === 'zero gravity') {
-            p.animate([
-                { transform: `translateY(0) rotate(0deg) scale(1)`, opacity: 0 },
-                { opacity: Math.random()*0.5 + 0.3, offset: 0.2 },
-                { transform: `translateY(${-Math.random()*150 - 50}px) rotate(180deg) scale(${Math.random()+0.5})`, opacity: 0 }
-            ], { duration: Math.random()*4000 + 2000, iterations: Infinity, direction: 'alternate' });
-        } else if (type === 'low gravity') {
-            p.animate([
-                { transform: `translateY(100vh) rotate(0)`, opacity: 0 },
-                { opacity: 0.6, offset: 0.5 },
-                { transform: `translateY(-10vh) rotate(360deg)`, opacity: 0 }
-            ], { duration: Math.random()*5000 + 3000, iterations: Infinity });
-        } else if (type === 'reverse gravity') {
-            p.animate([
-                { transform: `translateY(-10vh) scale(0)`, opacity: 0 },
-                { opacity: 0.8, offset: 0.5 },
-                { transform: `translateY(100vh) scale(1.5)`, opacity: 0 }
-            ], { duration: Math.random()*2000 + 1000, iterations: Infinity });
-        }
+        if (type === 'zero gravity') p.animate([ { transform: `translateY(0) rotate(0deg) scale(1)`, opacity: 0 }, { opacity: Math.random()*0.5 + 0.3, offset: 0.2 }, { transform: `translateY(${-Math.random()*150 - 50}px) rotate(180deg) scale(${Math.random()+0.5})`, opacity: 0 } ], { duration: Math.random()*4000 + 2000, iterations: Infinity, direction: 'alternate' });
+        else if (type === 'low gravity') p.animate([ { transform: `translateY(100vh) rotate(0)`, opacity: 0 }, { opacity: 0.6, offset: 0.5 }, { transform: `translateY(-10vh) rotate(360deg)`, opacity: 0 } ], { duration: Math.random()*5000 + 3000, iterations: Infinity });
+        else if (type === 'reverse gravity') p.animate([ { transform: `translateY(-10vh) scale(0)`, opacity: 0 }, { opacity: 0.8, offset: 0.5 }, { transform: `translateY(100vh) scale(1.5)`, opacity: 0 } ], { duration: Math.random()*2000 + 1000, iterations: Infinity });
         container.appendChild(p);
     }
 }
 
+// ---------- SCOREBOARD LOGIC ----------
 async function updateScore(player, type, change) {
     const res = await fetch(`/update_score?player=${encodeURIComponent(player)}&type=${type}&change=${change}`);
-    const data = await res.json();
+    const data = await res.json(); 
     renderScoreTable(data.scores);
+    interceptGameStatus(data); // catch formal manual KOs
 }
 
 function renderScoreTable(scores) {
-    const container = document.getElementById('floating-scoreboard');
-    const entries = Object.entries(scores);
-    const N = entries.length;
-    let html = '';
-    
-    entries.forEach(([name, s], i) => {
-        // Distribute algorithmically around an ellipse hugging the screen edge
-        let angle = (i / N) * 2 * Math.PI;
-        let rx = 42; // vw from center
-        let ry = 42; // vh from center
-        let left = 50 + Math.cos(angle) * rx;
-        let top = 50 + Math.sin(angle) * ry;
+    const container = document.getElementById('leaderboard-content'); let html = '';
+    Object.entries(scores).forEach(([name, s]) => {
+        let isKo = s.ko;
+        let koStyle = isKo ? 'opacity: 0.4; text-decoration: line-through; color: #ff0000; filter: grayscale(1);' : 'color:#ffaa00;';
         
-        // Clamp to prevent overflow
-        left = Math.max(9, Math.min(91, left));
-        top = Math.max(10, Math.min(90, top));
-
         html += `
-        <div class="hud-badge" style="left: ${left}vw; top: ${top}vh; transform: translate(-50%, -50%);">
-            <div class="hud-name">${name}</div>
-            <div class="hud-stat">
-                <span>Taken: <b>${s.sipped}</b></span>
-                <div class="hud-controls">
-                    <button class="hud-btn" onclick="updateScore('${name}', 'sipped', -1)">-</button>
-                    <button class="hud-btn" onclick="updateScore('${name}', 'sipped', 1)">+</button>
-                </div>
+        <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); ${isKo ? 'background: rgba(255,0,0,0.1); border-color: rgba(255,0,0,0.2);' : ''}">
+            <div style="font-weight:900; font-size:16px; margin-bottom:12px; text-transform:uppercase; letter-spacing:1px; ${koStyle}">${name} ${isKo ? '<span style="color:#ff0000; font-size:12px;">(KO)</span>' : ''}</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                <span style="font-size:12px; color:#ddd; font-weight:bold; letter-spacing:1px;">TAKEN: <b style="color:#fff; font-size:14px; margin-left:5px;">${s.sipped}</b></span>
+                <div style="display:flex; gap:6px;"><button style="margin:0; padding:2px 10px; font-size:12px; background:rgba(255,0,85,0.3); border-radius:6px; box-shadow:none;" onclick="updateScore('${name}', 'sipped', -1)">-</button><button style="margin:0; padding:2px 10px; font-size:12px; background:rgba(0,136,255,0.3); border-radius:6px; box-shadow:none;" onclick="updateScore('${name}', 'sipped', 1)">+</button></div>
             </div>
-            <div class="hud-stat">
-                <span>Given: <b>${s.given}</b></span>
-                <div class="hud-controls">
-                    <button class="hud-btn" onclick="updateScore('${name}', 'given', -1)">-</button>
-                    <button class="hud-btn" onclick="updateScore('${name}', 'given', 1)">+</button>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; color:#ddd; font-weight:bold; letter-spacing:1px;">GIVEN: <b style="color:#fff; font-size:14px; margin-left:5px;">${s.given}</b></span>
+                <div style="display:flex; gap:6px;"><button style="margin:0; padding:2px 10px; font-size:12px; background:rgba(255,0,85,0.3); border-radius:6px; box-shadow:none;" onclick="updateScore('${name}', 'given', -1)">-</button><button style="margin:0; padding:2px 10px; font-size:12px; background:rgba(0,136,255,0.3); border-radius:6px; box-shadow:none;" onclick="updateScore('${name}', 'given', 1)">+</button></div>
             </div>
         </div>`;
     });
     container.innerHTML = html;
 }
 
-// Interactive Resolution Paths
+// ---------- INTERACTIVE RESOLUTIONS ----------
 async function applyGive(source, target, sips) {
     const res = await fetch(`/apply_action?type=give&source=${encodeURIComponent(source)}&target=${encodeURIComponent(target)}&sips=${sips}`);
-    const data = await res.json();
-    renderScoreTable(data.scores);
-    
-    document.getElementById('action-payload').innerHTML = `<div style="color:#00ff88; font-size:18px; font-weight:bold; animation: flash 1s;">Action sent onto ${target}!</div>`;
-    document.getElementById('nextBtn').style.display = 'inline-block';
+    const data = await res.json(); renderScoreTable(data.scores);
+    if(interceptGameStatus(data)) return;
+    document.getElementById('action-payload').innerHTML = `<div style="color:#00ff88; font-size:16px; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${sips} SIPS FORCED ONTO ${target}</div>`;
+    document.getElementById('nextBtn').style.display = 'inline-block'; sfxHit();
+    logHistory(`${source} forced ${target} to take ${sips} sips`);
+}
+
+async function applyOrbit(source, target) {
+    const res = await fetch(`/apply_action?type=orbit&source=${encodeURIComponent(source)}&target=${encodeURIComponent(target)}`);
+    const data = await res.json(); renderScoreTable(data.scores);
+    if(interceptGameStatus(data)) return;
+    document.getElementById('action-payload').innerHTML = `<div style="color:#00e5ff; font-size:16px; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${source} IS NOW ORBITING ${target}</div>`;
+    document.getElementById('nextBtn').style.display = 'inline-block'; sfxHit();
+    logHistory(`${source} linked orbit with ${target}`);
 }
 
 function startBattle(playerA, playerB) {
+    sfxAlarm();
     document.getElementById('bg-layer').classList.add('bg-battle');
-    document.getElementById('battle-players').innerText = `${playerA}  VS  ${playerB}`;
+    document.getElementById('body-container').classList.add('shake'); setTimeout(() => document.getElementById('body-container').classList.remove('shake'), 600);
+    document.getElementById('battle-players').innerText = `${playerA} VS ${playerB}`;
     
-    const btnA = document.getElementById('btn-loser-a');
-    btnA.innerText = `${playerA} Lost`;
-    btnA.onclick = () => resolveBattle(playerB, playerA); // B wins, A loses
-
-    const btnB = document.getElementById('btn-loser-b');
-    btnB.innerText = `${playerB} Lost`;
-    btnB.onclick = () => resolveBattle(playerA, playerB); // A wins, B loses
-
-    document.getElementById('battle-screen').style.display = 'flex';
-    document.getElementById('main-card').style.display = 'none';
+    document.getElementById('btn-loser-a').innerText = `${playerA} LOST`; document.getElementById('btn-loser-a').onclick = () => resolveBattle(playerB, playerA);
+    document.getElementById('btn-loser-b').innerText = `${playerB} LOST`; document.getElementById('btn-loser-b').onclick = () => resolveBattle(playerA, playerB);
+    document.getElementById('battle-screen').style.display = 'flex'; document.getElementById('main-card').style.display = 'none';
+    logHistory(`BATTLE INITIATED: ${playerA} vs ${playerB}`);
 }
 
 async function resolveBattle(winner, loser) {
     const res = await fetch(`/apply_action?type=challenge&winner=${encodeURIComponent(winner)}&loser=${encodeURIComponent(loser)}`);
-    const data = await res.json();
-    renderScoreTable(data.scores);
-
+    const data = await res.json(); renderScoreTable(data.scores);
+    
     document.getElementById('bg-layer').classList.remove('bg-battle');
     document.getElementById('battle-screen').style.display = 'none';
     document.getElementById('main-card').style.display = 'block';
-
-    document.getElementById('action-payload').innerHTML = `<div style="color:#ff0055; font-size:18px; font-weight:bold;">${loser} lost and takes 4 sips! ${winner} gets the giving points!</div>`;
+    
+    if(interceptGameStatus(data)) return;
+    
+    document.getElementById('action-payload').innerHTML = `<div style="color:#ff0055; font-size:16px; font-weight:bold; letter-spacing:1px;">${loser} DEFEATED (-4 SIPS)</div>`;
     document.getElementById('nextBtn').style.display = 'inline-block';
+    document.getElementById('body-container').classList.add('shake'); setTimeout(() => document.getElementById('body-container').classList.remove('shake'), 600); sfxHit();
+    logHistory(`BATTLE RESOLVED: ${winner} defeated ${loser}`);
 }
 
+// ---------- CORE GAME LOOP ----------
 async function drawAction() {
     if (!gameStarted) return;
-    document.getElementById('nextBtn').style.display = 'none';
-    document.getElementById('action-payload').innerHTML = ''; // Clear past target interactions
-
-    const res = await fetch('/play');
-    const data = await res.json();
-
-    document.getElementById('gameTitle').innerText = `🔥 Round ${data.round}`;
-    renderScoreTable(data.scores); // keep hud updated every draw
     
-    // Antigravity & Particles
-    const bg = document.getElementById('bg-layer');
-    bg.className = '';
-    const card = document.getElementById('main-card');
-    card.className = 'card'; // reset card classes
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('action-payload').innerHTML = ''; 
+    sfxDraw(); const card = document.getElementById('main-card');
+    card.classList.remove('flipcard'); void card.offsetWidth; card.classList.add('flipcard');
+
+    const res = await fetch('/play'); const data = await res.json();
+    
+    // Check if the game was unexpectedly over (like hitting play button aggressively)
+    if(data.game_over) { interceptGameStatus(data); return; }
+    
+    document.getElementById('top-hud').innerText = `ROUND ${data.round}`;
+    renderScoreTable(data.scores);
+    
+    const bg = document.getElementById('bg-layer'); bg.className = ''; card.className = 'card flipcard';
     document.getElementById('particle-container').innerHTML = '';
     
     let badgeColor = "#ff0055"; 
-    
-    if (data.gravity === "low gravity") { 
-        bg.classList.add('bg-low-gravity'); card.classList.add('card-low-gravity');
-        badgeColor = "#00e5ff"; spawnParticles(50, 'low gravity'); 
-    }
-    else if (data.gravity === "zero gravity") { 
-        bg.classList.add('bg-zero-gravity'); card.classList.add('card-zero-gravity');
-        badgeColor = "#b000ff"; spawnParticles(70, 'zero gravity'); 
-    }
-    else if (data.gravity === "reverse gravity") { 
-        bg.classList.add('bg-reverse-gravity'); card.classList.add('card-reverse-gravity');
-        badgeColor = "#ffaa00"; spawnParticles(80, 'reverse gravity'); 
+    if (data.gravity === "low gravity") { bg.classList.add('bg-low-gravity'); card.classList.add('card-low-gravity'); badgeColor = "#00e5ff"; spawnParticles(50, 'low gravity'); }
+    else if (data.gravity === "zero gravity") { bg.classList.add('bg-zero-gravity'); card.classList.add('card-zero-gravity'); badgeColor = "#b000ff"; spawnParticles(70, 'zero gravity'); sfxAlarm(); }
+    else if (data.gravity === "reverse gravity") { bg.classList.add('bg-reverse-gravity'); card.classList.add('card-reverse-gravity'); badgeColor = "#ffaa00"; spawnParticles(80, 'reverse gravity'); sfxAlarm(); }
+
+    if (data.type === 'collapse') {
+        document.getElementById('body-container').classList.add('shake'); setTimeout(() => document.getElementById('body-container').classList.remove('shake'), 600); sfxHit();
+        logHistory("COLLAPSE DETECTED! EVERYONE PUNISHED.");
+    } else {
+        logHistory(`TURN DRAWN BY ${data.player}`);
     }
 
     document.getElementById('result').innerHTML = `
         ${data.gravity !== 'normal' ? `<div class="gravity-badge" style="box-shadow: 0 0 15px ${badgeColor}; background: ${badgeColor};">${data.gravity}</div>` : ''}
-        <div class="player">🎯 ${data.player}'s turn</div>
+        <div class="player">${data.player}'S TURN</div>
         <div class="type">${data.type}</div>
         <div class="message">${data.message}</div>
     `;
 
-    // Interactive Routing
+    // Process immediate End Game / KOs BEFORE target selection
+    if(interceptGameStatus(data)) return;
+
     let payload = document.getElementById('action-payload');
-    
     if (data.requires_target) {
-        let interactionHtml = `<div style="color:#ffaa00; font-size: 14px; margin-bottom: 10px; font-weight: bold;">SELECT A TARGET TO RECEIVE ${data.sips} SIPS:</div><div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">`;
-        const others = data.players.filter(p => p !== data.player);
-        others.forEach(p => {
-            interactionHtml += `<button onclick="applyGive('${data.player}', '${p}', ${data.sips})" style="background:#ffaa00; box-shadow:0 0 10px #ffaa00; margin:0; padding: 10px;">${p}</button>`;
-        });
-        interactionHtml += "</div>";
-        payload.innerHTML = interactionHtml;
+        if(data.type === 'orbit') {
+            let interactionHtml = `<div style="color:#00e5ff; font-weight: 800; font-size:12px; margin-bottom:12px; letter-spacing:1px;">SELECT ACTIVE PLAYER TO ORBIT:</div><div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">`;
+            data.active_players.filter(p => p !== data.player).forEach(p => { interactionHtml += `<button onclick="applyOrbit('${data.player}', '${p}')">${p}</button>`; });
+            payload.innerHTML = interactionHtml + `</div>`;
+        } else {
+            let sipsTxt = data.sips > 0 ? `(${data.sips} sips)` : '';
+            let interactionHtml = `<div style="color:#ffaa00; font-weight: 800; font-size:12px; margin-bottom:12px; letter-spacing:1px;">SELECT ACTIVE TARGET ${sipsTxt}:</div><div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">`;
+            // Safe array check: Only target ACTIVE PLAYERS returned down by backend
+            data.active_players.filter(p => p !== data.player).forEach(p => { interactionHtml += `<button onclick="applyGive('${data.player}', '${p}', ${data.sips})">${p}</button>`; });
+            payload.innerHTML = interactionHtml + `</div>`;
+        }
     } else if (data.requires_challenge) {
-        let interactionHtml = `<div style="color:#ff0055; font-size: 14px; margin-bottom: 10px; font-weight: bold;">SELECT AN OPPONENT FOR COMBAT:</div><div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">`;
-        const others = data.players.filter(p => p !== data.player);
-        others.forEach(p => {
-            interactionHtml += `<button onclick="startBattle('${data.player}', '${p}')" style="background:#ff0055; box-shadow:0 0 10px #ff0055; margin:0; padding: 10px;">Battle ${p}</button>`;
-        });
-        interactionHtml += "</div>";
-        payload.innerHTML = interactionHtml;
+        let interactionHtml = `<div style="color:#ff0055; font-weight: 800; font-size:12px; margin-bottom:12px; letter-spacing:1px;">SELECT ACTIVE OPPONENT FOR COMBAT:</div><div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">`;
+        data.active_players.filter(p => p !== data.player).forEach(p => { interactionHtml += `<button onclick="startBattle('${data.player}', '${p}')">BATTLE ${p}</button>`; });
+        payload.innerHTML = interactionHtml + `</div>`;
     } else {
-        // Standard action, show next button
         document.getElementById('nextBtn').style.display = 'inline-block';
     }
 }
